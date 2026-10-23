@@ -6,7 +6,9 @@ HOMETAX_URL = (
     "?w2xPath=/ui/pp/index_pp.xml&menuCd=index3"
 )
 LOGIN_SELECTOR = "#mf_txppWframe_loginboxFrame_anchor22"
+CERT_LOGIN_SELECTOR = "#MSG_TS703"
 WAIT_SECONDS = 30
+DEBUG_PORT = 9222
 PROFILE_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "hometax-chrome-profile"
 
 HOMETAX_ORIGINS = (
@@ -29,10 +31,15 @@ SITE_PERMISSIONS = (
 )
 
 CHROME_ARGUMENTS = (
+    "--new-window",
     "--start-maximized",
     "--use-fake-ui-for-media-stream",
     "--no-first-run",
     "--no-default-browser-check",
+    "--allow-insecure-localhost",
+    "--ignore-certificate-errors",
+    "--allow-running-insecure-content",
+    "--disable-features=BlockInsecurePrivateNetworkRequests,ProfilePickerOnStartup",
 )
 
 CHROME_PREFS = {

@@ -18,7 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import settings
-from permissions import create_driver
+from permissions import create_driver, ensure_magicline_running
 
 
 def dismiss_alert(driver: WebDriver) -> None:
@@ -95,16 +95,24 @@ def click_selector(
 
 
 def main() -> None:
+    print("[1/5] 브라우저 연결 및 프로필 로딩 중...")
     driver = create_driver(
         arguments=settings.CHROME_ARGUMENTS,
         prefs=settings.CHROME_PREFS,
         profile_dir=settings.PROFILE_DIR,
         origins=settings.HOMETAX_ORIGINS,
         site_permissions=settings.SITE_PERMISSIONS,
+        url=settings.HOMETAX_URL,
+        debug_port=settings.DEBUG_PORT,
     )
     try:
-        driver.get(settings.HOMETAX_URL)
+        print("[2/5] 홈택스 페이지 확인 중...")
+        if "hometax.go.kr" not in driver.current_url:
+            driver.get(settings.HOMETAX_URL)
+        
         main_handle = driver.current_window_handle
+
+        print("[3/5] 팝업창 정리 및 로그인 버튼 탐색 중...")
         close_popups(driver, main_handle)
         click_selector(
             driver,
@@ -113,7 +121,25 @@ def main() -> None:
             main_handle,
         )
         close_popups(driver, main_handle)
-        print(f"클릭 완료: {settings.LOGIN_SELECTOR}")
+        print(f"[4/5] 1차 로그인 버튼 클릭 완료! ({settings.LOGIN_SELECTOR})")
+
+        # 로그인 버튼 클릭 후 화면 로딩 대기 (5초)
+        print("로그인 페이지 로딩 대기 중 (5초)...")
+        time.sleep(5)
+
+        # 인증서 버튼 클릭 전 보안프로그램(MagicLine4NX) 실행 여부 재확인
+        print("[5/5] 보안프로그램 실행 상태 재확인 중...")
+        ensure_magicline_running()
+
+        print(f"인증서 버튼({settings.CERT_LOGIN_SELECTOR}) 클릭 시도 중...")
+        click_selector(
+            driver,
+            settings.CERT_LOGIN_SELECTOR,
+            settings.WAIT_SECONDS,
+            main_handle,
+        )
+        close_popups(driver, main_handle)
+        print(f"인증서 버튼 클릭 완료! ({settings.CERT_LOGIN_SELECTOR})")
 
         stop_watch = threading.Event()
 
@@ -136,3 +162,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
