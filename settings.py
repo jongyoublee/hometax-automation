@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 HOMETAX_URL = (
     "https://hometax.go.kr/websquare/websquare.html"
     "?w2xPath=/ui/pp/index_pp.xml&menuCd=index3"
@@ -9,7 +6,6 @@ LOGIN_SELECTOR = "#mf_txppWframe_loginboxFrame_anchor22"
 CERT_LOGIN_SELECTOR = "#MSG_TS703"
 WAIT_SECONDS = 30
 DEBUG_PORT = 9222
-PROFILE_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "hometax-chrome-profile"
 
 HOMETAX_ORIGINS = (
     "https://hometax.go.kr",
@@ -29,28 +25,3 @@ SITE_PERMISSIONS = (
     "sensors",
     "displayCapture",
 )
-
-CHROME_ARGUMENTS = (
-    "--new-window",
-    "--start-maximized",
-    "--use-fake-ui-for-media-stream",
-    "--no-first-run",
-    "--no-default-browser-check",
-    "--allow-insecure-localhost",
-    "--ignore-certificate-errors",
-    "--allow-running-insecure-content",
-    "--disable-features=BlockInsecurePrivateNetworkRequests,ProfilePickerOnStartup",
-)
-
-CHROME_PREFS = {
-    "profile.default_content_setting_values.notifications": 1,
-    "profile.default_content_setting_values.geolocation": 1,
-    "profile.default_content_setting_values.media_stream_mic": 1,
-    "profile.default_content_setting_values.media_stream_camera": 1,
-    "profile.default_content_setting_values.automatic_downloads": 1,
-    "profile.default_content_setting_values.clipboard": 1,
-    "profile.default_content_setting_values.protocol_handlers": 1,
-    "download.prompt_for_download": False,
-    "credentials_enable_service": False,
-    "profile.password_manager_enabled": False,
-}
